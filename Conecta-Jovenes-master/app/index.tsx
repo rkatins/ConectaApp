@@ -2,10 +2,13 @@ import { NavigationContainer, NavigationIndependentTree } from "@react-navigatio
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useEffect, useState } from "react";
 
-// REVISA AQUÍ: Si el archivo real empieza con Mayúscula, cámbialo (ej: ./clases/AyudaPass)
+import AuthContext from "./contexts/authContext";
+import { loadUser } from "./services/authService";
+
+// Pantallas
 import OlvidePass from "./iniciar-sesion/ayudaPass";
 import HomeScreen from "./iniciar-sesion/homeScreen";
-import LoginScreen from "./iniciar-sesion/index"; // ¿Seguro que el login es 'index'?
+import LoginScreen from "./iniciar-sesion/index";
 import MisEventos from "./iniciar-sesion/misEventos";
 import NuevaPass from "./iniciar-sesion/nuevaPass";
 import PerfilScreen from "./iniciar-sesion/perfil";
@@ -14,9 +17,8 @@ import Registro2Screen from "./iniciar-sesion/registroUser2";
 import SplashScreen from "./iniciar-sesion/splashScreen";
 import VerificacionEmail from "./iniciar-sesion/verificacionEmail";
 import VerificacionTelefono from "./iniciar-sesion/verificacionTelefono";
-
-import AuthContext from "./contexts/authContext";
-import { loadUser } from "./services/authService";
+// IMPORTANTE: Asegúrate de que este archivo existe con este nombre
+import LeerEventos from "./iniciar-sesion/leerEventos";
 
 const Stack = createNativeStackNavigator();
 
@@ -51,6 +53,7 @@ export default function Layout() {
                                 <Stack.Screen name="Home" component={HomeScreen} />
                                 <Stack.Screen name="Perfil" component={PerfilScreen} />
                                 <Stack.Screen name="MisEventos" component={MisEventos} />
+                                <Stack.Screen name="LeerEventos" component={LeerEventos} />
                             </Stack.Group>
                         ) : (
                             <Stack.Group>
