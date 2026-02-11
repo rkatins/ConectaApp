@@ -63,12 +63,14 @@ export default function HomeScreen({ navigation }) {
           desc='Encuentra el evento perfecto para ti'
         />
         
-        <Tile onPress={mostrarAlerta}
-          icono={icono_calendario}
-          titulo='Crear un evento'
-          desc='Dale forma a tu evento'
+       <Tile 
+            onPress={() => {
+                navigation.navigate("CrearEvento"); 
+            }}
+            icono={icono_calendario}
+            titulo='Crear un evento'
+            desc='Dale forma a tu evento'
         />
-        
         <Tile 
           onPress={() => navigation.navigate('MisEventos')}
           icono={icono_ticket}
@@ -85,7 +87,7 @@ export default function HomeScreen({ navigation }) {
         <TileExtra 
           onPress={() => navigation.navigate('Perfil')}
           icono={icono_gear}
-          titulo='Mi Perfil'
+          titulo='Ajustes'
         />
       </View>
     </View>
