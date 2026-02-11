@@ -4,11 +4,9 @@ import { Alert, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import styled from "styled-components/native";
 
-// CORRECCIÓN DE RUTAS: Usamos "../" para subir un nivel y encontrar las carpetas
 import AuthContext from "../contexts/authContext";
 import { logout } from "../services/authService";
 
-// Iconos
 import icono_calendario from '../icons/calendar-plus.webp';
 import icono_gear from '../icons/gear.webp';
 import icono_buscar from '../icons/search.webp';
@@ -94,7 +92,6 @@ export default function HomeScreen({ navigation }) {
   );
 }
 
-// --- ESTILOS ---
 
 const LogoutButton = styled.TouchableOpacity`
   align-self: flex-start;

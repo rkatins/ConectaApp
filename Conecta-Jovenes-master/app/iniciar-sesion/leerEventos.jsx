@@ -18,7 +18,6 @@ export default function ExplorarEventosScreen({ navigation }) {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
 
-  // Misma lógica de colores que en Perfil para mantener consistencia
   const getCategoryColor = (item) => {
     if (item.accesible === true || item.es_accesible === 1) return '#5099F8';
     const nombre = item.categoria?.nombre?.toLowerCase() || '';
@@ -71,7 +70,11 @@ export default function ExplorarEventosScreen({ navigation }) {
     return (
       <TouchableOpacity 
         style={styles.eventItem} 
-        onPress={() => navigation.navigate('DetalleEvento', { id: item.id })}
+        // CAMBIO AQUÍ: Ahora pasamos el ID y el OBJETO completo para el detalle
+        onPress={() => navigation.navigate('DetalleEvento', { 
+            id: item.id, 
+            evento: item 
+        })}
       >
         <View style={styles.cardHeader}>
           <View style={[styles.categoryBadge, { backgroundColor: colorCat }]}>
@@ -94,7 +97,6 @@ export default function ExplorarEventosScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.mainContainer}>
-      {/* Header con Buscador */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButtonMini} onPress={() => navigation.goBack()}>
           <Ionicons name="chevron-back" size={24} color="white" />
@@ -110,11 +112,11 @@ export default function ExplorarEventosScreen({ navigation }) {
             style={styles.searchInput}
             value={search}
             onChangeText={handleSearch}
+            placeholderTextColor="#999"
           />
         </View>
       </View>
 
-      {/* Contenedor Azul (Estilo similar al Perfil) */}
       <View style={styles.blueContent}>
         {loading ? (
           <ActivityIndicator color="white" size="large" style={{ marginTop: 50 }} />
@@ -146,7 +148,6 @@ const styles = StyleSheet.create({
   },
   headerTitle: { fontSize: 22, fontWeight: '800', color: 'white', marginLeft: 10 },
   backButtonMini: { backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 12, padding: 8 },
-  
   searchContainer: { paddingHorizontal: 20, marginBottom: 20 },
   searchBox: { 
     flexDirection: 'row', 
@@ -157,15 +158,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     elevation: 4
   },
-  searchInput: { marginLeft: 10, flex: 1, fontSize: 16 },
-
-  blueContent: { 
-    flex: 1, 
-    backgroundColor: '#5099F8', // Opcional: puedes cambiarlo a blanco y que las cards sean azules
-    paddingHorizontal: 20,
-  },
+  searchInput: { marginLeft: 10, flex: 1, fontSize: 16, color: '#000' },
+  blueContent: { flex: 1, backgroundColor: '#5099F8', paddingHorizontal: 20 },
   listPadding: { paddingBottom: 40 },
-
   eventItem: { 
     backgroundColor: 'white', 
     padding: 18, 
