@@ -1,304 +1,111 @@
-import { StatusBar } from "expo-status-bar";
-import { useContext, useEffect, useState } from "react";
-import {
-  Keyboard,
-  Platform,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import DropDownPicker from "react-native-dropdown-picker";
+import React, { useContext, useEffect, useState } from "react";
+import { ActivityIndicator, Alert, ScrollView } from "react-native";
+import { Dropdown } from 'react-native-element-dropdown';
 import styled from "styled-components/native";
-import AuthContext from "../contexts/authContext.jsx";
-import { obtenerCategorias } from "../services/categoryService.jsx";
-import { obtenerEntidades } from "../services/entityService.jsx";
-import { pedirTexto } from "./control.jsx";
+import AuthContext from "../contexts/authContext";
+import { obtenerCategorias } from "../services/categoryService";
+import { obtenerEntidades } from "../services/entityService";
+
 export default function CrearEvento1({ navigation }) {
-  const { user, setUser } = useContext(AuthContext);
-  const [openCategoria, setOpenCategoria] = useState(false);
-  const [openEntidad, setOpenEntidad] = useState(false);
-  const [itemsCategoria, setItemsCategoria] = useState([]);
-  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("");
-  const [itemsEntidades, setItemsEntidades] = useState([]);
-  const [entidadSeleccionada, setEntidadSeleccionada] = useState("");
-  const [nombreEvento, setNombreEvento] = useState("");
-  const [ubicacionEvento, setUbicacionEvento] = useState("");
-  const [descripcionEvento, setDescripcionEvento] = useState("");
-  const [errores, setErrores] = useState({});
+  const { user } = useContext(AuthContext); 
+  
+  const [nombre, setNombre] = useState("");
+  const [desc, setDesc] = useState("");
+  const [ubi, setUbi] = useState("");
+  const [idCat, setIdCat] = useState(null);
+  const [idEnt, setIdEnt] = useState(null);
+  const [categorias, setCategorias] = useState([]);
+  const [entidades, setEntidades] = useState([]);
+  const [cargando, setCargando] = useState(true);
 
   useEffect(() => {
-    async function cargarCategorias() {
-      const newErrors = {};
+    async function cargarDatos() {
       try {
-        const data = await obtenerCategorias();
-        const mapped = data.map((cat) => ({
-          label: cat.nombre,
-          value: cat.id,
-        }));
-        setItemsCategoria(mapped);
-      } catch (e) {
-        newErrors.categoria = "No se pudieron cargar las categorías";
-        setErrores(newErrors);
-      }
+        const [resCats, resEnts] = await Promise.all([obtenerCategorias(), obtenerEntidades()]);
+        setCategorias(resCats.map(c => ({ label: c.nombre, value: c.id })));
+        setEntidades(resEnts.map(e => ({ label: e.nombre, value: e.id })));
+      } catch (error) {
+        Alert.alert("Error", "No se pudieron cargar los datos.");
+      } finally { setCargando(false); }
     }
-    async function cargarEntidad() {
-      const newErrors = {};
-      try {
-        const data = await obtenerEntidades();
-        const mapped = data.map((cat) => ({
-          label: cat.nombre,
-          value: cat.id,
-        }));
-        setItemsEntidades(mapped);
-      } catch (e) {
-        newErrors.entidad = "No se pudieron cargar las entidades";
-        setErrores(newErrors);
-        console.log(e);
-      }
-    }
-    cargarCategorias();
-    cargarEntidad();
+    cargarDatos();
   }, []);
 
-  const validarCampos = () => {
-    const newErrors = {};
-    if (!categoriaSeleccionada) {
-      newErrors.categoria = "Debe seleccionar una categoría";
+  const manejarSiguiente = () => {
+    if (!nombre || !desc || !idCat || !idEnt || ubi.length < 5) {
+      Alert.alert("Campos incompletos", "Rellena todo. La ubicación debe tener al menos 5 caracteres.");
+      return;
     }
-    if (!entidadSeleccionada) {
-      newErrors.entidad = "Debe seleccionar una entidad";
-    }
-    if (!nombreEvento.trim()) {
-      newErrors.nombre = "El nombre del evento es obligatorio";
-    }
-    if (!ubicacionEvento.trim()) {
-      newErrors.ubicacion = "La ubicación del evento es obligatorio";
-    }
-    setErrores(newErrors);
-    return Object.keys(newErrors).length === 0;
+    
+    navigation.navigate("CrearEvento2", {
+      id_categoria: idCat,
+      id_entidad: idEnt,
+      id_creador: user?.id || 21,
+      nombre: nombre,
+      desc: desc,
+      ubi: ubi 
+    });
   };
 
+  if (cargando) return <Centrado><ActivityIndicator size="large" color="#2563eb" /></Centrado>;
+
   return (
-    <Contenedor style={{ paddingTop: Platform.OS === "ios" ? 0 : 50, flex: 1 }}>
-      <StatusBar style="auto" />
-      <Pressable style={{ flex: 1 }} onPress={Keyboard.dismiss}>
-        <View style={styles.container}>
-          <View style={{ flex: 1, zIndex: 2, position: "relative" }}>
-            <Text
-              style={{ fontSize: 30, marginBottom: 10, fontWeight: "bold" }}
-            >
-              Crear nuevo evento
-            </Text>
+    <Contenedor>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <Titulo>Crear Evento</Titulo>
+        
+        <Seccion>
+          <LabelAzul>Información General</LabelAzul>
+          <InputRounded placeholder="Nombre del evento" value={nombre} onChangeText={setNombre} />
+          <InputRounded 
+            placeholder="Descripción" 
+            multiline 
+            numberOfLines={4} 
+            value={desc} 
+            onChangeText={setDesc} 
+            style={{ height: 100, textAlignVertical: 'top' }} 
+          />
+        </Seccion>
 
-            {/* Nombre */}
-            <Text
-              style={{ fontSize: 20, marginVertical: 10, fontWeight: "500" }}
-            >
-              Nombre del evento
-            </Text>
-            <TextInput
-              placeholder="Escribe el nombre del evento"
-              placeholderTextColor="#999999"
-              style={[
-                {
-                  borderWidth: 1,
-                  padding: 12,
-                  borderRadius: 8,
-                  height: 43,
-                },
-                errores.nombre
-                  ? { borderColor: "red" }
-                  : { borderColor: "#d1d5dc" },
-              ]}
-              value={nombreEvento}
-              onChangeText={(text) => setNombreEvento(pedirTexto(text))}
-            />
-            {errores.nombre && (
-              <Text style={{ color: "red" }}>{errores.nombre}</Text>
-            )}
+        <Seccion>
+          <LabelAzul>ID de Ubicación (API)</LabelAzul>
+          <InputRounded placeholder="Ej. 65b8f1a9c2e44f..." value={ubi} onChangeText={setUbi} />
+        </Seccion>
 
-            {/* Descripción */}
-            <Text
-              style={{ fontSize: 20, marginVertical: 10, fontWeight: "500" }}
-            >
-              Descripción
-            </Text>
-            <TextInput
-              placeholder="Escriba una descripción del evento"
-              placeholderTextColor="#999999"
-              multiline={true}
-              numberOfLines={3}
-              textAlignVertical="top"
-              style={{
-                borderWidth: 1,
-                padding: 12,
-                borderRadius: 8,
-                height: 72,
-                borderColor: "#d1d5dc",
-              }}
-              value={descripcionEvento}
-              onChangeText={(text) => setDescripcionEvento(text)}
-            />
+        <Seccion>
+          <LabelAzul>Categoría y Entidad</LabelAzul>
+          <DropdownStyle 
+            data={categorias} 
+            labelField="label" 
+            valueField="value" 
+            placeholder="Selecciona Categoría" 
+            value={idCat} 
+            onChange={item => setIdCat(item.value)} 
+          />
+          <DropdownStyle 
+            data={entidades} 
+            labelField="label" 
+            valueField="value" 
+            placeholder="Selecciona Entidad" 
+            value={idEnt} 
+            onChange={item => setIdEnt(item.value)} 
+          />
+        </Seccion>
 
-            {/* Categoría */}
-            <Text
-              style={{ fontSize: 20, marginVertical: 10, fontWeight: "500" }}
-            >
-              Categoría
-            </Text>
-            <DropDownPicker
-              open={openCategoria}
-              value={categoriaSeleccionada}
-              items={itemsCategoria}
-              setOpen={setOpenCategoria}
-              setValue={setCategoriaSeleccionada}
-              setItems={setItemsCategoria}
-              placeholder="Seleccione una categoría"
-              textStyle={{ fontSize: 18 }}
-              style={[
-                {
-                  height: 50,
-                  borderRadius: 10,
-                  paddingHorizontal: 10,
-                },
-                errores.categoria
-                  ? { borderColor: "red" }
-                  : { borderColor: "#d1d5dc" },
-              ]}
-              dropDownContainerStyle={{
-                borderColor: "#d1d5dc",
-              }}
-              zIndex={3000}
-              zIndexInverse={1000}
-              elevation={3000}
-            />
-            {errores.categoria && (
-              <Text style={{ color: "red" }}>{errores.categoria}</Text>
-            )}
-
-            {/* Entidad */}
-            <Text
-              style={{ fontSize: 20, marginVertical: 10, fontWeight: "500" }}
-            >
-              Entidad
-            </Text>
-            <DropDownPicker
-              open={openEntidad}
-              value={entidadSeleccionada}
-              items={itemsEntidades}
-              setOpen={setOpenEntidad}
-              setValue={setEntidadSeleccionada}
-              setItems={setItemsEntidades}
-              placeholder="Seleccione una Entidad"
-              textStyle={{ fontSize: 18 }}
-              style={[
-                {
-                  height: 50,
-                  borderRadius: 10,
-                  paddingHorizontal: 10,
-                },
-                errores.entidad
-                  ? { borderColor: "red" }
-                  : { borderColor: "#d1d5dc" },
-              ]}
-              dropDownContainerStyle={{
-                borderColor: "#d1d5dc",
-              }}
-              zIndex={2000}
-              zIndexInverse={1000}
-              elevation={2000}
-            />
-            {errores.entidad && (
-              <Text style={{ color: "red" }}>{errores.entidad}</Text>
-            )}
-
-            {/* Ubicación */}
-            <Text
-              style={{ fontSize: 20, marginVertical: 10, fontWeight: "500" }}
-            >
-              Ubicación
-            </Text>
-            <TextInput
-              placeholder="Escribe la ubicación del evento"
-              placeholderTextColor="#999999"
-              style={[
-                {
-                  borderWidth: 1,
-                  padding: 12,
-                  borderRadius: 8,
-                  height: 43,
-                },
-                errores.ubicacion
-                  ? { borderColor: "red" }
-                  : { borderColor: "#d1d5dc" },
-              ]}
-              value={ubicacionEvento}
-              onChangeText={(text) => setUbicacionEvento(pedirTexto(text))}
-            />
-            {errores.ubicacion && (
-              <Text style={{ color: "red" }}>{errores.ubicacion}</Text>
-            )}
-          </View>
-
-          {/* boton */}
-          <View
-            style={{
-              paddingHorizontal: 20,
-              paddingBottom: 50,
-              zIndex: 1,
-              position: "relative",
-            }}
-          >
-            <TouchableOpacity
-              onPress={() => {
-                if (validarCampos()) {
-                  navigation.navigate("CrearEvento2", {
-                    id_categoria: categoriaSeleccionada,
-                    id_entidad: entidadSeleccionada,
-                    id_creador: user?.id,
-                    nombre: nombreEvento,
-                    desc: descripcionEvento,
-                    ubi: ubicacionEvento,
-                  });
-                }
-              }}
-              style={{
-                backgroundColor: "#5099f8",
-                paddingVertical: 15,
-                borderRadius: 10,
-                alignItems: "center",
-              }}
-            >
-              <Text
-                style={{ color: "white", fontSize: 18, fontWeight: "bold" }}
-              >
-                Siguiente
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Pressable>
+        <BotonAzul onPress={manejarSiguiente}>
+          <TextoBoton>Siguiente Paso</TextoBoton>
+        </BotonAzul>
+      </ScrollView>
     </Contenedor>
   );
 }
-const Contenedor = styled.SafeAreaView`
-  flex: 1;
-  background-color: #ffffffff;
-`;
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 9,
-    padding: 25,
-  },
-  pickerWrapper: {
-    borderWidth: 1,
-    borderColor: "#D1D5DC",
-    borderRadius: 8,
-    overflow: Platform.OS === "android" ? "hidden" : "visible",
-    marginBottom: 10,
-  },
-});
+const Centrado = styled.View` flex: 1; justify-content: center; align-items: center; background: #fff; `;
+const Contenedor = styled.SafeAreaView` flex: 1; padding: 25px; background-color: #fff; `;
+const Titulo = styled.Text` font-size: 30px; font-weight: 800; color: #1e3a8a; margin-bottom: 20px; `;
+const Seccion = styled.View` margin-bottom: 20px; `;
+const LabelAzul = styled.Text` color: #3b82f6; font-weight: 700; margin-bottom: 10px; font-size: 14px; text-transform: uppercase; `;
+const InputRounded = styled.TextInput` background: #eff6ff; padding: 18px; border-radius: 20px; border: 1.5px solid #dbeafe; color: #1e40af; margin-bottom: 12px; `;
+const DropdownStyle = styled(Dropdown)` background: #eff6ff; padding: 15px; border-radius: 20px; border: 1.5px solid #dbeafe; margin-bottom: 12px; `;
+const BotonAzul = styled.TouchableOpacity` background: #2563eb; padding: 20px; border-radius: 25px; align-items: center; margin-vertical: 20px; `;
+const TextoBoton = styled.Text` color: white; font-weight: 800; font-size: 18px; `;

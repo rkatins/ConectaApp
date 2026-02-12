@@ -2,12 +2,14 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useEffect, useState } from "react";
 import AuthContext from "./contexts/authContext";
 
-// --- TODOS LOS ARCHIVOS EN /iniciar-sesion ---
+// --- IMPORTANTE: Verifica que los nombres de archivos coincidan con estos ---
+// --- IMPORTANTE: Nombres corregidos a minúsculas para coincidir con tus archivos ---
 import OlvidePass from "./iniciar-sesion/ayudaPass";
-import CrearEvento from "./iniciar-sesion/crearEvento1";
+import CrearEvento1 from "./iniciar-sesion/crearEvento1";
 import CrearEvento2 from "./iniciar-sesion/crearEvento2";
 import DetalleEvento from "./iniciar-sesion/DetalleEvento";
 import HomeScreen from "./iniciar-sesion/homeScreen";
+// ... resto de imports;
 import LoginScreen from "./iniciar-sesion/index";
 import LeerEventos from "./iniciar-sesion/leerEventos";
 import MisEventos from "./iniciar-sesion/misEventos";
@@ -20,18 +22,19 @@ import { loadUser } from "./services/authService";
 const Stack = createNativeStackNavigator();
 
 export default function Layout() {
-    const [user, setUser] = useState();
+    const [user, setUser] = useState(null); // Cambiado a null por defecto
     const [status, setStatus] = useState("loading");
 
     useEffect(() => {
         async function runEffect() {
             try {
-                const user = await loadUser();
-                setUser(user);
+                const loadedUser = await loadUser();
+                setUser(loadedUser);
             } catch (e) {
-                console.log("Error de usuario", e);
+                console.log("Error de usuario al cargar:", e);
+            } finally {
+                setStatus("inactivo"); // Usamos finally para asegurar que deje de cargar
             }
-            setStatus("inactivo");
         }
         runEffect();
     }, []);
@@ -48,7 +51,8 @@ export default function Layout() {
                         <Stack.Screen name="MisEventos" component={MisEventos} />
                         <Stack.Screen name="LeerEventos" component={LeerEventos} />                            
                         <Stack.Screen name="DetalleEvento" component={DetalleEvento} />
-                        <Stack.Screen name="CrearEvento" component={CrearEvento} />
+                        {/* Asegúrate de usar CrearEvento1 aquí si así se llama el componente exportado */}
+                        <Stack.Screen name="CrearEvento" component={CrearEvento1} /> 
                         <Stack.Screen name="CrearEvento2" component={CrearEvento2} />
                     </Stack.Group>
                 ) : (
