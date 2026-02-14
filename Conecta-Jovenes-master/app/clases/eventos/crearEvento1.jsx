@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons'; // Importamos Ionicons
 import { useContext, useEffect, useState } from "react";
 import { ActivityIndicator, Alert, ScrollView, View } from "react-native";
 import { Dropdown } from 'react-native-element-dropdown';
@@ -51,11 +52,18 @@ export default function CrearEvento1({ navigation }) {
 
   return (
     <Contenedor>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingVertical: 40 }}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingVertical: 20 }}>
         
+        {/* BOTÓN VOLVER ATRÁS */}
+        <View style={{ paddingHorizontal: 25, marginBottom: 10, marginTop: 20 }}>
+          <BackButton onPress={() => navigation.goBack()}>
+            <Ionicons name="chevron-back" size={24} color="#1e3a8a" />
+          </BackButton>
+        </View>
+
         <Cabecera>
           <Titulo>Crear Evento</Titulo>
-          <Subtitulo>Paso 1 de 2</Subtitulo>
+          <Subtitulo>Paso 1 de 2: Información general</Subtitulo>
         </Cabecera>
         
         <Seccion>
@@ -80,7 +88,7 @@ export default function CrearEvento1({ navigation }) {
         <Seccion>
           <LabelAzul>Ubicación</LabelAzul>
           <InputRounded 
-            placeholder="ID de Ubicación o Dirección" 
+            placeholder="Dirección o lugar del evento" 
             value={ubi} 
             onChangeText={setUbi} 
             placeholderTextColor="#94a3b8"
@@ -109,7 +117,7 @@ export default function CrearEvento1({ navigation }) {
           />
         </Seccion>
 
-        <View style={{ paddingHorizontal: 25 }}>
+        <View style={{ paddingHorizontal: 25, marginBottom: 40 }}>
           <BotonAzul onPress={manejarSiguiente} activeOpacity={0.8}>
             <TextoBoton>Siguiente Paso</TextoBoton>
           </BotonAzul>
@@ -120,11 +128,21 @@ export default function CrearEvento1({ navigation }) {
   );
 }
 
-// --- ESTILOS MEJORADOS ---
+// --- ESTILOS ---
 
 const Contenedor = styled.SafeAreaView`
   flex: 1;
   background-color: #fff;
+`;
+
+// Estilo para el botón de atrás
+const BackButton = styled.TouchableOpacity`
+  background-color: #f1f5f9;
+  width: 45px;
+  height: 45px;
+  border-radius: 15px;
+  justify-content: center;
+  align-items: center;
 `;
 
 const Centrado = styled.View`

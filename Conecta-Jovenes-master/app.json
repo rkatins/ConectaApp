@@ -9,7 +9,7 @@
     "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.javisa.ventanasiniciarsesion",
+      "bundleIdentifier": "com.javisa.Conecta",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
@@ -17,10 +17,11 @@
     "android": {
       "package": "com.javisa.ventanasiniciarsesion",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/LOGO HC Completo Colores.png",
+        "foregroundImage": "./assets/images/LOGO HC Simple.png",
         "backgroundColor": "#E6F4FE"
       },
       "permissions": [
+        "INTERNET",
         "INTERNET"
       ]
     },
@@ -41,6 +42,12 @@
       "eas": {
         "projectId": "60e07072-8b14-44af-84bc-b2dcf2e0a769"
       }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/60e07072-8b14-44af-84bc-b2dcf2e0a769"
     }
   }
 }

@@ -7,7 +7,8 @@ import styled from "styled-components/native";
 import { registroEvento } from "../../services/eventService";
 
 export default function CrearEvento2({ route, navigation }) {
-  const { id_categoria, id_entidad, id_creador, nombre, desc, ubi } = route.params;
+  // Verificamos que los parámetros lleguen correctamente
+  const { id_categoria, id_entidad, id_creador, nombre, desc, ubi } = route.params || {};
 
   const [esAccesible, setEsAccesible] = useState(false);
   const [numParticipantes, setNumParticipantes] = useState("");
@@ -81,10 +82,10 @@ export default function CrearEvento2({ route, navigation }) {
   return (
     <Contenedor>
       <StatusBar style="dark" />
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingVertical: 40 }}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingVertical: 20 }}>
         
         {/* BOTÓN VOLVER ATRÁS */}
-        <View style={{ paddingHorizontal: 25, marginBottom: 20 }}>
+        <View style={{ paddingHorizontal: 25, marginBottom: 10, marginTop: 20 }}>
           <BackButton onPress={() => navigation.goBack()}>
             <Ionicons name="chevron-back" size={24} color="#1e3a8a" />
           </BackButton>
@@ -145,7 +146,7 @@ export default function CrearEvento2({ route, navigation }) {
           </CardAccesibilidad>
         </Seccion>
 
-        <View style={{ paddingHorizontal: 25 }}>
+        <View style={{ paddingHorizontal: 25, marginBottom: 40 }}>
           <BotonAzul onPress={manejarRegistro} activeOpacity={0.8}>
             <TextoBoton>Publicar Evento</TextoBoton>
           </BotonAzul>
