@@ -5,36 +5,45 @@ export const tile_css = StyleSheet.create({
         width: '100%',             
         flexDirection: 'row',
         backgroundColor: '#5099F8',
-        borderRadius: 20,          
-        paddingVertical: 32,       // <--- Mantenemos esto alto para que resalten
-        paddingHorizontal: 20,
+        borderRadius: 25,          
+        // --- AQUÍ ESTÁ EL TRUCO PARA QUE SEAN MÁS GORDOS ---
+        paddingVertical: 40,       // Aumentamos mucho la altura interna
+        paddingHorizontal: 15,     // Bajamos el espacio lateral para que el texto ocupe más
+        // --------------------------------------------------
         alignItems: 'center',
+        marginVertical: 5,         // Espacio entre botones
+        elevation: 4,              // Sombra en Android
+        shadowColor: '#000',       // Sombra en iOS
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
     },
     contendorTexto: {
         flex: 1,
-        marginLeft: 15,
+        marginLeft: 20,            
     },
     icono: {
-        width: 40,
-        height: 40,
+        width: 55,                 // Icono más grande para que el botón no se vea vacío
+        height: 55,
         tintColor: '#FFFFFF',
     },
     texto_titulo: {
-        fontSize: 22,
+        fontSize: 24,              // Letra más grande
         fontWeight: 'bold',
         color: '#FFFFFF',
     },
     texto: {
-        fontSize: 14,
+        fontSize: 15,
         color: '#FFFFFF',
         opacity: 0.9,
+        marginTop: 4,
     }
 });
 
 export const tileExtra_css = StyleSheet.create({
     contenedor: {
-        flex: 0.45,                // <--- Bajamos de 1 a 0.45 para que sean más estrechos
-        aspectRatio: 1.1,          // <--- Un poco más bajos que anchos para que no ocupen tanto vertical
+        width: '48%',              // Para que los de abajo sigan siendo finos y quepan dos
+        aspectRatio: 1.2,          
         backgroundColor: '#5099F8',
         borderRadius: 20,
         justifyContent: 'center',
@@ -42,12 +51,12 @@ export const tileExtra_css = StyleSheet.create({
         padding: 10,
     },
     icono: {
-        width: 35,                 // Icono un poco más pequeño
+        width: 35,
         height: 35,
         tintColor: '#FFFFFF',
     },
     texto_titulo: {
-        fontSize: 15,              // Texto más pequeño para que quepa bien
+        fontSize: 15,
         fontWeight: 'bold',
         color: '#FFFFFF',
         textAlign: 'center',

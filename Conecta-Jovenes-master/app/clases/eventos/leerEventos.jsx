@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react'; // Añadido useContext
 import {
   ActivityIndicator,
   FlatList,
@@ -10,9 +10,11 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import { getToken } from '../services/tokenService';
+import AuthContext from '../../contexts/authContext'; // Asegúrate de que esta ruta es correcta
+import { getToken } from '../../services/tokenService';
 
 export default function ExplorarEventosScreen({ navigation }) {
+  const { user } = useContext(AuthContext); // Obtenemos el usuario logueado
   const [eventos, setEventos] = useState([]);
   const [filteredEventos, setFilteredEventos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -41,8 +43,12 @@ export default function ExplorarEventosScreen({ navigation }) {
       });
       const data = await response.json();
       const lista = Array.isArray(data) ? data : (data.data || []);
-      setEventos(lista);
-      setFilteredEventos(lista);
+
+      // FILTRO: Solo mostramos eventos donde el creador NO sea el usuario actual
+      const eventosAjenos = lista.filter(event => event.id_creador !== user?.id);
+      
+      setEventos(eventosAjenos);
+      setFilteredEventos(eventosAjenos);
     } catch (error) {
       console.error("Error al cargar eventos:", error);
     } finally {
@@ -70,10 +76,10 @@ export default function ExplorarEventosScreen({ navigation }) {
     return (
       <TouchableOpacity 
         style={styles.eventItem} 
-        // CAMBIO AQUÍ: Ahora pasamos el ID y el OBJETO completo para el detalle
         onPress={() => navigation.navigate('DetalleEvento', { 
             id: item.id, 
-            evento: item 
+            evento: item,
+            userIdActual: user?.id 
         })}
       >
         <View style={styles.cardHeader}>
@@ -87,9 +93,17 @@ export default function ExplorarEventosScreen({ navigation }) {
 
         <Text style={styles.eventTitle}>{item.nombre}</Text>
         
-        <View style={styles.locationRow}>
-          <Ionicons name="location-outline" size={14} color={colorCat} />
-          <Text style={styles.eventSub}>{item.ubicacion}</Text>
+        {/* FILA DE INFO: Ubicación a la izquierda y Participantes a la derecha */}
+        <View style={styles.infoRow}>
+          <View style={styles.locationRow}>
+            <Ionicons name="location-outline" size={14} color={colorCat} />
+            <Text style={styles.eventSub} numberOfLines={1}>{item.ubicacion}</Text>
+          </View>
+          
+          <View style={styles.participantsBadge}>
+            <Ionicons name="people-outline" size={14} color="#666" />
+            <Text style={styles.participantsText}>{item.num_participantes || 0}</Text>
+          </View>
         </View>
       </TouchableOpacity>
     );
@@ -128,7 +142,7 @@ export default function ExplorarEventosScreen({ navigation }) {
             contentContainerStyle={styles.listPadding}
             showsVerticalScrollIndicator={false}
             ListEmptyComponent={
-              <Text style={styles.emptyText}>No se encontraron eventos</Text>
+              <Text style={styles.emptyText}>No se encontraron eventos disponibles</Text>
             }
           />
         )}
@@ -176,7 +190,30 @@ const styles = StyleSheet.create({
   categoryBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10 },
   categoryText: { color: 'white', fontSize: 10, fontWeight: '800' },
   eventTitle: { fontWeight: 'bold', color: '#333', fontSize: 17, marginBottom: 6 },
-  locationRow: { flexDirection: 'row', alignItems: 'center' },
-  eventSub: { fontSize: 13, color: '#666', marginLeft: 5 },
+  
+  // Estilos nuevos para la fila de info
+  infoRow: { 
+    flexDirection: 'row', 
+    justifyContent: 'space-between', 
+    alignItems: 'center' 
+  },
+  locationRow: { flexDirection: 'row', alignItems: 'center', flex: 1 },
+  eventSub: { fontSize: 13, color: '#666', marginLeft: 5, marginRight: 10 },
+  
+  participantsBadge: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    backgroundColor: '#F0F5FA', 
+    paddingHorizontal: 8, 
+    paddingVertical: 4, 
+    borderRadius: 8 
+  },
+  participantsText: { 
+    fontSize: 12, 
+    fontWeight: '700', 
+    color: '#666', 
+    marginLeft: 4 
+  },
+  
   emptyText: { color: 'white', textAlign: 'center', marginTop: 50, fontSize: 16, opacity: 0.8 }
 });

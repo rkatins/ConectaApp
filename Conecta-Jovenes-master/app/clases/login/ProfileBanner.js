@@ -1,6 +1,6 @@
-import { useNavigation } from '@react-navigation/native'; // Para que funcione el salto a Perfil
-import { Image, Text, TouchableOpacity, View } from 'react-native'; // Añadido TouchableOpacity
-import { profileBanner_css } from "../css/profileBanner_css";
+import { useNavigation } from '@react-navigation/native';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
+import { profileBanner_css } from "../../css/profileBanner_css";
 
 export function ProfileBanner({ nombre, url_avatar }) {
     const navigation = useNavigation(); 
@@ -14,8 +14,7 @@ export function ProfileBanner({ nombre, url_avatar }) {
 
             <TouchableOpacity 
                 style={profileBanner_css.contenedoAvatar}
-            onPress={() => navigation.navigate('Perfil')}
-
+                onPress={() => navigation.navigate('Perfil')}
                 activeOpacity={0.7} 
             >
                 <Image 

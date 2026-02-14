@@ -1,6 +1,6 @@
 import { Image, Pressable, Text, View } from 'react-native';
 
-import { tile_css, tileExtra_css } from '../css/tiles_css';
+import { tile_css, tileExtra_css } from '../../css/tiles_css';
 
 export function Tile({onPress, icono, titulo, desc}) {
     return (

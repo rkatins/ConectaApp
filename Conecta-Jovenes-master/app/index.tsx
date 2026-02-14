@@ -2,27 +2,32 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useEffect, useState } from "react";
 import AuthContext from "./contexts/authContext";
 
-// --- IMPORTANTE: Verifica que los nombres de archivos coincidan con estos ---
-// --- IMPORTANTE: Nombres corregidos a minúsculas para coincidir con tus archivos ---
-import OlvidePass from "./iniciar-sesion/ayudaPass";
-import CrearEvento1 from "./iniciar-sesion/crearEvento1";
-import CrearEvento2 from "./iniciar-sesion/crearEvento2";
-import DetalleEvento from "./iniciar-sesion/DetalleEvento";
-import HomeScreen from "./iniciar-sesion/homeScreen";
-// ... resto de imports;
-import LoginScreen from "./iniciar-sesion/index";
-import LeerEventos from "./iniciar-sesion/leerEventos";
-import MisEventos from "./iniciar-sesion/misEventos";
-import PerfilScreen from "./iniciar-sesion/perfil";
-import RegistroScreen from "./iniciar-sesion/registroUser1";
-import Registro2Screen from "./iniciar-sesion/registroUser2";
-import SplashScreen from "./iniciar-sesion/splashScreen";
+// Imports de autenticación y carga
+import ConfigUser from "./clases/configuracion/configuracion";
+import EditInfCuenta from "./clases/configuracion/editarInfCuenta";
+import EditInfPersonal from "./clases/configuracion/editarInfPersonal";
+import InfoCuenta from "./clases/configuracion/infoCuenta";
+import LoginScreen from "./clases/index";
+import OlvidePass from "./clases/login/ayudaPass";
+import RegistroScreen from "./clases/login/registroUser1";
+import Registro2Screen from "./clases/login/registroUser2";
+import SplashScreen from "./clases/login/splashScreen";
+// Imports de funcionalidades (Corregidos según tu árbol de archivos)
+import DetalleEvento from "./clases/eventos/DetalleEvento";
+import ModEvento from "./clases/eventos/ModEvento"; // Verifica que la 'M' y 'E' coincidan con el archivo
+import CrearEvento1 from "./clases/eventos/crearEvento1";
+import CrearEvento2 from "./clases/eventos/crearEvento2";
+import LeerEventos from "./clases/eventos/leerEventos";
+import MisEventos from "./clases/eventos/misEventos";
+import homeScreen from "./clases/main/homeScreen"; // 'h' minúscula para coincidir con el archivo
+import PerfilScreen from "./clases/perfil/perfil";
+
 import { loadUser } from "./services/authService";
 
 const Stack = createNativeStackNavigator();
 
 export default function Layout() {
-    const [user, setUser] = useState(null); // Cambiado a null por defecto
+    const [user, setUser] = useState(null);
     const [status, setStatus] = useState("loading");
 
     useEffect(() => {
@@ -31,9 +36,9 @@ export default function Layout() {
                 const loadedUser = await loadUser();
                 setUser(loadedUser);
             } catch (e) {
-                console.log("Error de usuario al cargar:", e);
+                console.log("Error al cargar usuario:", e);
             } finally {
-                setStatus("inactivo"); // Usamos finally para asegurar que deje de cargar
+                setStatus("inactivo");
             }
         }
         runEffect();
@@ -46,14 +51,18 @@ export default function Layout() {
             <Stack.Navigator screenOptions={{ headerShown: false }}>
                 {user ? (
                     <Stack.Group>
-                        <Stack.Screen name="Home" component={HomeScreen} />
+                        <Stack.Screen name="Home" component={homeScreen} />
                         <Stack.Screen name="Perfil" component={PerfilScreen} />
                         <Stack.Screen name="MisEventos" component={MisEventos} />
                         <Stack.Screen name="LeerEventos" component={LeerEventos} />                            
                         <Stack.Screen name="DetalleEvento" component={DetalleEvento} />
-                        {/* Asegúrate de usar CrearEvento1 aquí si así se llama el componente exportado */}
+                        <Stack.Screen name="ModEvento" component={ModEvento} />
                         <Stack.Screen name="CrearEvento" component={CrearEvento1} /> 
                         <Stack.Screen name="CrearEvento2" component={CrearEvento2} />
+                        <Stack.Screen name="Configuracion" component={ConfigUser}/>
+                        <Stack.Screen name="InformacionCuenta" component={InfoCuenta}/>
+                        <Stack.Screen name="EditarInformacionCuenta" component={EditInfCuenta}/>
+                        <Stack.Screen name="EditarInformacionPersonal" component={EditInfPersonal}/>
                     </Stack.Group>
                 ) : (
                     <Stack.Group>

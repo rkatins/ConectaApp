@@ -11,8 +11,8 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import AuthContext from '../contexts/authContext';
-import { getToken } from '../services/tokenService';
+import AuthContext from '../../contexts/authContext';
+import { getToken } from '../../services/tokenService';
 
 export default function PerfilScreen({ navigation }) {
   const { user } = useContext(AuthContext); 
@@ -21,14 +21,10 @@ export default function PerfilScreen({ navigation }) {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  // Modificado: Ahora recibe el objeto 'item' completo para verificar accesibilidad
   const getCategoryColor = (item) => {
-    // 1. Prioridad: Si es accesible, color azul
     if (item.accesible === true || item.es_accesible === 1 || item.accesible === 1) {
       return '#5099F8'; 
     }
-
-    // 2. Si no, colores por categoría
     const nombre = item.categoria?.nombre?.toLowerCase() || '';
     if (nombre.includes('deporte')) return '#B3E458';
     if (nombre.includes('cultura')) return '#FFB553'; 
@@ -40,13 +36,11 @@ export default function PerfilScreen({ navigation }) {
     try {
       setLoading(true);
       const activeToken = await getToken();
-
       if (!user?.id || !activeToken) {
         setLoading(false);
         return;
       }
       const url = `https://hackathon.lausnchez.es/api/v1/user/${user.id}/eventosPropios`;
-      
       const response = await fetch(url, {
         method: 'GET',
         headers: {
@@ -55,9 +49,7 @@ export default function PerfilScreen({ navigation }) {
           'Authorization': `Bearer ${activeToken}` 
         }
       });
-
       const data = await response.json();
-
       if (response.ok) {
         const lista = Array.isArray(data) ? data : (data.data || []);
         setEventos(lista);
@@ -120,12 +112,16 @@ export default function PerfilScreen({ navigation }) {
               <ActivityIndicator color="white" size="large" style={{ marginTop: 20 }} />
             ) : eventos.length > 0 ? (
               eventos.map((item) => {
-                // Llamamos a la función pasando el item completo
                 const colorCat = getCategoryColor(item);
                 const esAccesible = item.accesible === true || item.es_accesible === 1;
 
                 return (
-                  <View key={item.id} style={styles.eventItem}>
+                  <TouchableOpacity 
+                    key={item.id} 
+                    style={styles.eventItem}
+                    activeOpacity={0.9}
+                    onPress={() => navigation.navigate('ModEvento', { evento: item })} // NAVEGACIÓN AQUÍ
+                  >
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                       <View style={[styles.categoryBadge, { backgroundColor: colorCat }]}>
                         <Text style={styles.categoryText}>
@@ -133,7 +129,6 @@ export default function PerfilScreen({ navigation }) {
                         </Text>
                       </View>
                       
-                      {/* Icono extra si es accesible */}
                       {esAccesible && (
                         <Ionicons name="accessibility" size={18} color="#5099F8" style={{ marginBottom: 5 }} />
                       )}
@@ -145,7 +140,7 @@ export default function PerfilScreen({ navigation }) {
                       <Ionicons name="location-outline" size={14} color={colorCat} />
                       <Text style={styles.eventSub}>{item.ubicacion}</Text>
                     </View>
-                  </View>
+                  </TouchableOpacity>
                 );
               })
             ) : (
@@ -161,6 +156,7 @@ export default function PerfilScreen({ navigation }) {
   );
 }
 
+// ... (Los estilos se mantienen iguales que los tuyos)
 const styles = StyleSheet.create({
   mainContainer: { flex: 1, backgroundColor: '#fff' },
   scrollContainer: { flexGrow: 1 },

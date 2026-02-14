@@ -1,17 +1,17 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useContext, useEffect, useState } from 'react';
 import {
-    ActivityIndicator,
-    RefreshControl,
-    SafeAreaView,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View
+  ActivityIndicator,
+  RefreshControl,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
 } from 'react-native';
-import AuthContext from '../contexts/authContext';
-import { getToken } from '../services/tokenService';
+import AuthContext from '../../contexts/authContext';
+import { getToken } from '../../services/tokenService';
 
 export default function MisEventosScreen({ navigation }) {
   const { user } = useContext(AuthContext);
