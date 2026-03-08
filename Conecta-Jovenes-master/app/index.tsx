@@ -21,6 +21,8 @@ import LeerEventos from "./clases/eventos/leerEventos";
 import MisEventos from "./clases/eventos/misEventos";
 import homeScreen from "./clases/main/homeScreen"; // 'h' minúscula para coincidir con el archivo
 import PerfilScreen from "./clases/perfil/perfil";
+import DetalleAmigo from "./clases/amigos/DetalleAmigo";
+import LeerAmigos from "./clases/amigos/LeerAmigos";
 
 import { loadUser } from "./services/authService";
 
@@ -63,6 +65,8 @@ export default function Layout() {
                         <Stack.Screen name="InformacionCuenta" component={InfoCuenta}/>
                         <Stack.Screen name="EditarInformacionCuenta" component={EditInfCuenta}/>
                         <Stack.Screen name="EditarInformacionPersonal" component={EditInfPersonal}/>
+                        <Stack.Screen name="LeerAmigos" component={LeerAmigos}/>
+                        <Stack.Screen name="DetalleAmigo" component={DetalleAmigo}/>
                     </Stack.Group>
                 ) : (
                     <Stack.Group>
