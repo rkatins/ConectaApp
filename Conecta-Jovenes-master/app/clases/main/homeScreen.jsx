@@ -64,7 +64,7 @@ export default function HomeScreen({ navigation }) {
         </View>
 
         <View style={profileView_css.container_TilesExtra}>
-          <TileExtra onPress={mostrarAlerta}
+          <TileExtra onPress={() => navigation.navigate('LeerAmigos')}
             icono={icono_amigos}
             titulo='Tus amigos'
           />
