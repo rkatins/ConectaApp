@@ -87,7 +87,7 @@ export default function CreateUser1({ navigation }) {
             </InputWrapper>
           </Tarjeta>
 
-          <LabelAzul>Nacimiento</LabelAzul>
+          <LabelAzul> Fecha de Nacimiento</LabelAzul>
           <Tarjeta>
             <TouchableOpacity 
               onPress={() => setMostrar(true)} 
